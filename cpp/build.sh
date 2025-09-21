@@ -1,0 +1,1 @@
+qmake . && make -j4

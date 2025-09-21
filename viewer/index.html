@@ -17,18 +17,18 @@
     // Scene setup
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const center = new THREE.Vector3(4.5, 0, 27);
-    camera.position.set(center.x, center.y, 80);
-    camera.lookAt(center);
-
+    const center = new THREE.Vector3(-30, -50, 27);
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
     // Orbit Controls
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.target.copy(center);
+    camera.position.set(center.x, center.y - 40, 75);
     controls.minDistance =  10; // Minimum zoom
     controls.maxDistance = 200; // Maximum zoom
+    controls.update();
     
     //=========================================================================
     // light
@@ -121,59 +121,61 @@
     // lines
     //=========================================================================
     
-    fetch("/results/last.json").then(response => response.json()).then(data =>
+    if (true)
     {
-        for (var line of data)
+        fetch("/results/last.json").then(response => response.json()).then(data =>
         {
-            if (line.type == 0)
+            for (var line of data)
             {
-                const material = new THREE.PointsMaterial({size: 0.3, vertexColors: true});
-                const nb_colors = line.colors.length;
-
-                var colors = [];
-                var points = [];
-                for (var pt in line.points)
+                if (line.type == 0)
                 {
-                    points.push(line.points[pt][0],
-                                line.points[pt][1],
-                                line.points[pt][2]);
-                    colors.push(line.colors[Math.min(nb_colors-1, pt)][0],
-                                line.colors[Math.min(nb_colors-1, pt)][1],
-                                line.colors[Math.min(nb_colors-1, pt)][2]);
-                }
+                    const material = new THREE.PointsMaterial({size: 0.3, vertexColors: true});
+                    const nb_colors = line.colors.length;
 
-                const geometry = new THREE.BufferGeometry();
-                geometry.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
-				geometry.setAttribute('color',    new THREE.Float32BufferAttribute(colors, 3));
-                //scene.add(new THREE.Points(geometry, material));
-            }
-            else if (line.type == 1)
-            {
-                const material = new THREE.LineBasicMaterial({color: new THREE.Color().setRGB(line.color[0], line.color[1], line.color[2])});
-                var points = [];
-                for (var pt of line.points)
-                    points.push(new THREE.Vector3(pt[0], pt[1], pt[2]));
-                
-                const geometry = new THREE.BufferGeometry().setFromPoints(points);
-                scene.add(new THREE.Line(geometry, material));
-            }
-            else if (line.type == 2) // sphere
-            {
-                const geometry = new THREE.SphereGeometry(line.radius, 32, 16);
-                var color = {color: new THREE.Color().setRGB(line.color[0], line.color[1], line.color[2])};
-                if (line.opacity != undefined && line.opacity < 1.)
-                {
-                    color.transparent = true;
-                    color.opacity = line.opacity;
+                    var colors = [];
+                    var points = [];
+                    for (var pt in line.points)
+                    {
+                        points.push(line.points[pt][0],
+                                    line.points[pt][1],
+                                    line.points[pt][2]);
+                        colors.push(line.colors[Math.min(nb_colors-1, pt)][0],
+                                    line.colors[Math.min(nb_colors-1, pt)][1],
+                                    line.colors[Math.min(nb_colors-1, pt)][2]);
+                    }
+
+                    const geometry = new THREE.BufferGeometry();
+                    geometry.setAttribute('position', new THREE.Float32BufferAttribute(points, 3));
+                    geometry.setAttribute('color',    new THREE.Float32BufferAttribute(colors, 3));
+                    //scene.add(new THREE.Points(geometry, material));
                 }
-                const material = new THREE.MeshBasicMaterial(color);
-                const sphere = new THREE.Mesh(geometry, material);
-                sphere.position.set(line.position[0], line.position[1], line.position[2]);
-                scene.add(sphere);
+                else if (line.type == 1)
+                {
+                    const material = new THREE.LineBasicMaterial({color: new THREE.Color().setRGB(line.color[0], line.color[1], line.color[2])});
+                    var points = [];
+                    for (var pt of line.points)
+                        points.push(new THREE.Vector3(pt[0], pt[1], pt[2]));
+                    
+                    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+                    scene.add(new THREE.Line(geometry, material));
+                }
+                else if (line.type == 2) // sphere
+                {
+                    const geometry = new THREE.SphereGeometry(line.radius, 32, 16);
+                    var color = {color: new THREE.Color().setRGB(line.color[0], line.color[1], line.color[2])};
+                    if (line.opacity != undefined && line.opacity < 1.)
+                    {
+                        color.transparent = true;
+                        color.opacity = line.opacity;
+                    }
+                    const material = new THREE.MeshBasicMaterial(color);
+                    const sphere = new THREE.Mesh(geometry, material);
+                    sphere.position.set(line.position[0], line.position[1], line.position[2]);
+                    scene.add(sphere);
+                }
             }
-        }
-    });
-    
+        });
+    }
     //=========================================================================
     //
     //=========================================================================
@@ -182,6 +184,8 @@
     function animate() {
         requestAnimationFrame(animate);
         renderer.render(scene, camera);
+        console.log("camera.position", camera.position);
+        console.log("camera.lookAt", camera.lookAt);
     }
     animate();
 
