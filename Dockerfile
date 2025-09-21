@@ -1,4 +1,4 @@
-# docker build -f Dockerfile_cpp . -t skyways
+# docker build -f Dockerfile . -t skyways
 # docker run --rm -it -v $PWD:/app -p 9000:9000 -w /app skyways
 
 FROM ubuntu:24.04
@@ -31,22 +31,23 @@ RUN apt update && apt install -y build-essential \
                                  liblapack-dev \
                                  libarpack2-dev \
                                  libsuperlu-dev \
-                                 libboost-all-dev
-
-##############################################################################################
-# armadillo
-##############################################################################################
-
-COPY armadillo-12.6.6.tar.xz .
-RUN tar -xvf armadillo-12.6.6.tar.xz && \
-    cd armadillo-12.6.6  && \
-    ./configure && \
-    make && \
-    make install
+                                 libboost-all-dev \
+                                 libarmadillo-dev \
+                                 sudo \
+                                 python3 \
+                                 python3-pip
 
 ##############################################################################################
 #
 ##############################################################################################
 
-RUN useradd -m user
+RUN pip install numpy --break-system-packages
+
+##############################################################################################
+#
+##############################################################################################
+
+RUN useradd -m -s /bin/bash user && \
+    echo "user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
 USER user
