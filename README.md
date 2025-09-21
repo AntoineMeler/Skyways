@@ -6,7 +6,7 @@ Work in progress!
 
 `/data/data_11.f32` must be dowloaded from [here](https://drive.google.com/file/d/1DHrZWw_FXUYsjCyzOfxLtAPk97D03CD0/view?usp=drive_lin).
 
-This file contains a 4-dimensional tensor with shape `(height, width, heading, altitude)`.
+This file contains a 4-dimensional tensor with shape `(y, x, heading, altitude)`.
 
 ## Particles
 
