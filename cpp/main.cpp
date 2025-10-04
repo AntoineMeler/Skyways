@@ -233,13 +233,13 @@ void step1(vector<Particle> *particles0, vector<Particle> *particles, const Data
 
 int main()
 {
-    const int grid_smoothing_iterations = 45;
+    const int grid_smoothing_iterations = 25; //45;
 
     //=========================================================================
     // 0) some input visualization
     //=========================================================================
 
-#if 1
+#if 0
     {
         Data data("../data/data_11.f32", grid_smoothing_iterations);
         //Data data("../WebGL/data_11.f32", grid_smoothing_iterations);
@@ -253,7 +253,7 @@ int main()
 
     const float particle_threshold = 0.1f;
 
-#if 1
+#if 0
     {
         const vector<float> param_vals = {0.f}; //{0.f, 0.1f, 1.f};
 
@@ -274,7 +274,7 @@ int main()
 
 
             // optimize particles
-            const int nb_iterations = 301;
+            const int nb_iterations = 501;
             for (int it=0; it<nb_iterations; it++)
             {
                 //const float step_size = 0.03f;

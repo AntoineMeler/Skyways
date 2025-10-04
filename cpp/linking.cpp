@@ -829,35 +829,7 @@ struct EdgeComparator
 
 void linking(Data *data, vector<Particle> *_particles, vector<Particle> *_particles0)
 {
-#if 0
-    {
-        vector<Line> lines;
-        Line line;
-        line.points.resize(3);
-        line.points[0].xyz = {0,6,6};
-        line.points[1].xyz = {1,6,6};
-        line.points[2].xyz = {2,6,6};
-        line.points[0].neighbors.resize(2);
-        Vec3 xyz = {1,2,3};
-        line.points[0].neighbors[0] = new Point(xyz, 0, 1.);
-        line.points[0].neighbors[1] = new Point(xyz, 0, 1.);
-        lines.push_back(line);
-
-        Graph graph(lines);
-        cout << "graph.adjList.size() " << graph.adjList.size() << endl;
-        graph.save("/tmp/graph.bin");
-        
-        cout << "LOAD " << endl;
-        Graph graph2("/tmp/graph.bin");
-        cout << "graph2.adjList.size() " << graph2.adjList.size() << endl;
-        graph2.export_json("res/loaded.json", "");
-    }
-    return;
-#endif
-
-
     assert(_particles0->size() == _particles->size());
-
 
     const size_t nb_particles = _particles->size();
     ValueField value_field(data);
@@ -1230,7 +1202,7 @@ void linking(Data *data, vector<Particle> *_particles, vector<Particle> *_partic
 
     cout << "edge collapse " << edgeQueue.size() << endl;
 
-    for (int it=0; edgeQueue.size() > 10000; it++)
+    for (int it=0; edgeQueue.size() > 60000; it++)
     {
         auto it_edge = edgeQueue.begin();
         Edge edge_to_collapse = *it_edge;
@@ -1271,7 +1243,7 @@ void linking(Data *data, vector<Particle> *_particles, vector<Particle> *_partic
     cout << tips.size() << " tips" << endl;
 
     
-#if 1
+#if 0
     set<LinePoint*> debug_clouds;
     vector<tuple<Vec3,Vec3,Vec3,Vec3>> best_debug_stitching;
 
@@ -1369,48 +1341,6 @@ void linking(Data *data, vector<Particle> *_particles, vector<Particle> *_partic
 #endif
 
     std::ostringstream stream;
-#if 0
-    {
-        //for (const auto& tip : tips)
-        for (const auto& tip : debug_clouds)
-        {
-            bool first = true;
-            stream << ",{";
-            stream <<     "\"type\": 0,";
-            stream <<     "\"colors\": [["<< (float)(rand()%1001)/1000.f << ", " <<
-                                             (float)(rand()%1001)/1000.f << ", " <<
-                                             (float)(rand()%1001)/1000.f << "]],";
-            stream <<     "\"points\": [";
-            
-            for (const auto& pt : tip->neighbors)
-            {
-                if (!first) stream << ",";
-                Graph::export_point(stream, pt->xyz0);
-                first = false;
-            }
-
-            stream <<     "]";
-            stream << "}";
-        }
-
-        for (const auto& line : best_debug_stitching)
-        {
-            stream << ",{";
-            stream <<     "\"type\": 1,";
-            stream <<     "\"color\": [1, 1, 1],";
-            stream <<     "\"points\": [";
-            Graph::export_point(stream, std::get<0>(line));
-            stream << ",";
-            Graph::export_point(stream, std::get<1>(line));
-            stream << ",";
-            Graph::export_point(stream, std::get<2>(line));
-            stream << ",";
-            Graph::export_point(stream, std::get<3>(line));
-            stream <<     "]";
-            stream << "}";
-        }
-    }
-#endif
 
     //=========================================================================
     // Export
