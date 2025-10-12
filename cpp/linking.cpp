@@ -18,7 +18,7 @@ using Mat3 = arma::Mat<D_TYPE>::fixed<3,3>;
 #define FACTOR_Y   1.f
 #define FACTOR_A  10.f
 
-#define MIN_SUM_W  90.
+#define MIN_SUM_W  50.
 #define MIN_SUM_W2  1.
 
 #define EPSILON 1e-10
@@ -754,7 +754,7 @@ public:
                 stream << "{";
                 stream <<     "\"type\": 2,"; // sphere
                 stream <<     "\"color\": [1, 1, 1],";
-                stream <<     "\"radius\": 0.2,";
+                stream <<     "\"radius\": 0.1,";
                 stream <<     "\"opacity\": 1,";
                 stream <<     "\"position\": ";
                 export_point(stream, node.first->xyz);
@@ -983,7 +983,7 @@ void linking(Data *data, vector<Particle> *_particles, vector<Particle> *_partic
             line.update_bb();
             lines.push_back(line);
             
-            cout << line_id << " " << line.size() << endl;
+            cout << "find lines: " << line_id << " " << line.size() << endl;
 
             for (auto itp=line_particles.begin(); itp!=line_particles.end(); itp++)
                 (*itp)->line_id = line_id;
@@ -1003,7 +1003,7 @@ void linking(Data *data, vector<Particle> *_particles, vector<Particle> *_partic
 
     for (int it=0; it<100 / 1; it++)
     {
-        cout << it << endl;
+        cout << "gradient descent: " << it << endl;
         vector<Line> lines_next = lines;
 
         for (size_t l1=0; l1<nb_lines; l1++)
@@ -1112,7 +1112,7 @@ void linking(Data *data, vector<Particle> *_particles, vector<Particle> *_partic
     //=========================================================================
     // Add inter-line edges
     //=========================================================================
-#if 1
+#if 0
     const D_TYPE max_distance3 = D_TYPE(.2)*max_distance2;
     map<pair<LinePoint*,LinePoint*>, set<pair<D_TYPE, LinePoint*>>> points_to_add;
 
@@ -1202,13 +1202,13 @@ void linking(Data *data, vector<Particle> *_particles, vector<Particle> *_partic
 
     cout << "edge collapse " << edgeQueue.size() << endl;
 
-    for (int it=0; edgeQueue.size() > 60000; it++)
+    for (int it=0; edgeQueue.size() > 100000; it++)
     {
         auto it_edge = edgeQueue.begin();
         Edge edge_to_collapse = *it_edge;
 
         if (it % 100 == 0)
-            cout << it << " " << edge_to_collapse.collpase_cost << " " << edgeQueue.size() << endl;
+            cout << "edge collapse: " << it << " " << edge_to_collapse.collpase_cost << " " << edgeQueue.size() << endl;
 
         assert(edge_to_collapse.get(0) != edge_to_collapse.get(1));
 
@@ -1236,6 +1236,7 @@ void linking(Data *data, vector<Particle> *_particles, vector<Particle> *_partic
     // add missing connexions
     //=========================================================================
 
+#if 0
     set<LinePoint*> tips;
     for (const auto& node : graph.adjList)
         if (node.second.size() == 1) // 1 edge -> it is a tip
@@ -1243,7 +1244,6 @@ void linking(Data *data, vector<Particle> *_particles, vector<Particle> *_partic
     cout << tips.size() << " tips" << endl;
 
     
-#if 0
     set<LinePoint*> debug_clouds;
     vector<tuple<Vec3,Vec3,Vec3,Vec3>> best_debug_stitching;
 

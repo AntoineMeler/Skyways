@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <math.h>
+#include <QFile>
 #include <QImage>
 #include <QImageWriter>
 
@@ -234,6 +235,7 @@ void step1(vector<Particle> *particles0, vector<Particle> *particles, const Data
 int main()
 {
     const int grid_smoothing_iterations = 25; //45;
+    const string particle_path =  "../results/"+ to_string(grid_smoothing_iterations) +".particles";
 
     //=========================================================================
     // 0) some input visualization
@@ -253,8 +255,9 @@ int main()
 
     const float particle_threshold = 0.1f;
 
-#if 0
+    if (!QFile::exists(particle_path.c_str()))
     {
+        cout << particle_path << " NOT FOUND, computing..." << endl;
         const vector<float> param_vals = {0.f}; //{0.f, 0.1f, 1.f};
 
         for (size_t param_i=0; param_i<param_vals.size(); param_i++)
@@ -297,14 +300,14 @@ int main()
                     export_image(&data, &particles0, &particles, filename +"_"+ to_string(it) +".png");
                     //export_pointcloud(&particles, filename +".ply");
                     export_pointcloud(&particles, "../results/last.ply");
-                    Particle::save_particles(&particles, "../results/last.particles");
 #endif
                 }
                 cout << it << endl;
             }
+
+            Particle::save_particles(&particles, particle_path);
         }
     }
-#endif
 
     //=========================================================================
     // 2) trajectory inference from particles
@@ -320,7 +323,7 @@ int main()
 
         // particles after optimization
         vector<Particle> particles;
-        Particle::load_particles(&particles, "../results/last.particles");
+        Particle::load_particles(&particles, particle_path);
 
         // skyways inference
         linking(&data, &particles, &particles0);

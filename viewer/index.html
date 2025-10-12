@@ -266,9 +266,8 @@ window.addEventListener('keydown', (event) => {
 
 
 <div style="position:absolute; top:10px; left:10px; color:#fff">
-<input type="checkbox" onchange="points_group.visible = this.checked" checked> show points<br>
-<input type="checkbox" onchange="lines_group.visible = this.checked" checked> show lines<br>
-<input type="button" onclick="reload_data()" value="reload data">
+<input type="checkbox" onchange="points_group.visible = this.checked" checked> show points <span style="cursor:pointer" onclick="reload_data(true, false)">⟳</span><br>
+<input type="checkbox" onchange="lines_group.visible = this.checked" checked> show lines <span style="cursor:pointer" onclick="reload_data(false, true)">⟳</span><br>
 </div>
 
 <div id="spinner" style="position:absolute; top:10px; right:10px;"><span class="loader"></span></div>
@@ -285,15 +284,17 @@ function data_loaded()
         document.getElementById("spinner").style.display = "none";
 }
 
-function reload_data()
+function reload_data(points, lines)
 {
-    nb_data_to_load = 2;
+    nb_data_to_load = (points ? 1 : 0) + (lines ? 1 : 0);
     document.getElementById("spinner").style.display = "block";
-    loadLines();
-    loadPoints();
+    if (lines)
+        loadLines();
+    if (points)
+        loadPoints();
 }
 
-reload_data();
+reload_data(true, true);
 
 </script>
 </body>
